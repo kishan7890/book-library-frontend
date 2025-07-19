@@ -3,10 +3,18 @@ import api from '../api';
 
 function MyBooks() {
   const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     api.get('/mybooks')
-      .then(res => setBooks(res.data.books));
+      .then(res => {
+        setBooks(res.data.books);
+        setLoading(false); // ✅ Done loading
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false); // ✅ Still stop loading even if error
+      });
   }, []);
 
   const updateStatus = (id, status) => {
@@ -18,6 +26,16 @@ function MyBooks() {
     api.patch(`/mybooks/${id}/rating`, { rating })
       .then(() => alert("Rating updated"));
   };
+
+  if(loading){
+    return (
+      <div className="flex justify-center items-center h-96">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+        <p className="ml-4 text-lg">Loading books...</p>
+      </div>
+    );
+  }
+
 
   return (
     <div className="p-4">
