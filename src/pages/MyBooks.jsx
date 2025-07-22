@@ -1,31 +1,44 @@
 import { useEffect, useState } from 'react';
 import api from '../api';
-import BookCard from '../components/BookCard'; // Adjust path if needed
+import MyBookCard from '../components/MyBookCard';
 
 function MyBooks() {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    api.get('/mybooks', { withCredentials: true })
-      .then(res => {
-        setBooks(res.data.books);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Error fetching my books:", err);
-        setLoading(false);
-      });
-  }, []);
-
-  const updateStatus = (id, status) => {
-    api.patch(`/mybooks/${id}/status`, { status }, { withCredentials: true })
-      .then(() => alert("Status updated"));
+  const fetchBooks = async () => {
+    try {
+      const res = await api.get('/mybooks');
+      setBooks(res.data.books);
+    } catch (err) {
+      console.error("Failed to fetch books", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const updateRating = (id, rating) => {
-    api.patch(`/mybooks/${id}/rating`, { rating }, { withCredentials: true })
-      .then(() => alert("Rating updated"));
+  useEffect(() => {
+    fetchBooks();
+  }, []);
+
+  const updateStatus = async (id, status) => {
+    try {
+      await api.patch(`/mybooks/${id}/status`, { status });
+      alert("Status updated");
+      fetchBooks(); // re-fetch to update UI
+    } catch (err) {
+      console.error("Failed to update status", err);
+    }
+  };
+
+  const updateRating = async (id, rating) => {
+    try {
+      await api.patch(`/mybooks/${id}/rating`, { rating });
+      alert("Rating updated");
+      fetchBooks(); // re-fetch to update UI
+    } catch (err) {
+      console.error("Failed to update rating", err);
+    }
   };
 
   if (loading) {
@@ -38,35 +51,20 @@ function MyBooks() {
   }
 
   return (
-    <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {books.map(b => (
-        <BookCard key={b._id} book={b.book}>
-          <div>
-            <label>Status: </label>
-            <select
-              value={b.status}
-              onChange={(e) => updateStatus(b.bookId, e.target.value)}
-              className="border rounded px-2 py-1 ml-2"
-            >
-              <option>Want to Read</option>
-              <option>Currently Reading</option>
-              <option>Read</option>
-            </select>
-          </div>
-
-          <div className="mt-2">
-            <label>Rating: </label>
-            <input
-              type="number"
-              min="1"
-              max="5"
-              defaultValue={b.rating}
-              onBlur={(e) => updateRating(b.bookId, e.target.value)}
-              className="border rounded px-2 py-1 ml-2 w-16"
-            />
-          </div>
-        </BookCard>
-      ))}
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-6">My Books</h1>
+      {books.length === 0 ? (
+        <p>No books found in your list.</p>
+      ) : (
+        books.map(book => (
+          <MyBookCard
+            key={book.bookId}
+            mybook={book}
+            onUpdateStatus={updateStatus}
+            onUpdateRating={updateRating}
+          />
+        ))
+      )}
     </div>
   );
 }
