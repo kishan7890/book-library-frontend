@@ -1,33 +1,34 @@
 import { useEffect, useState } from 'react';
 import api from '../api';
+import BookCard from '../components/BookCard'; // Adjust path if needed
 
 function MyBooks() {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/mybooks')
+    api.get('/mybooks', { withCredentials: true })
       .then(res => {
         setBooks(res.data.books);
-        setLoading(false); // ✅ Done loading
+        setLoading(false);
       })
       .catch(err => {
-        console.error(err);
-        setLoading(false); // ✅ Still stop loading even if error
+        console.error("Error fetching my books:", err);
+        setLoading(false);
       });
   }, []);
 
   const updateStatus = (id, status) => {
-    api.patch(`/mybooks/${id}/status`, { status })
+    api.patch(`/mybooks/${id}/status`, { status }, { withCredentials: true })
       .then(() => alert("Status updated"));
   };
 
   const updateRating = (id, rating) => {
-    api.patch(`/mybooks/${id}/rating`, { rating })
+    api.patch(`/mybooks/${id}/rating`, { rating }, { withCredentials: true })
       .then(() => alert("Rating updated"));
   };
 
-  if(loading){
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-96">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
@@ -36,20 +37,35 @@ function MyBooks() {
     );
   }
 
-
   return (
-    <div className="p-4">
+    <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {books.map(b => (
-        <div key={b._id} className="border p-4 rounded mb-4">
-          <p>Status: {b.status}</p>
-          <select onChange={(e) => updateStatus(b.bookId, e.target.value)} defaultValue={b.status}>
-            <option>Want to Read</option>
-            <option>Currently Reading</option>
-            <option>Read</option>
-          </select>
-          <p>Rating: {b.rating}</p>
-          <input type="number" min="1" max="5" onChange={(e) => updateRating(b.bookId, e.target.value)} />
-        </div>
+        <BookCard key={b._id} book={b.book}>
+          <div>
+            <label>Status: </label>
+            <select
+              value={b.status}
+              onChange={(e) => updateStatus(b.bookId, e.target.value)}
+              className="border rounded px-2 py-1 ml-2"
+            >
+              <option>Want to Read</option>
+              <option>Currently Reading</option>
+              <option>Read</option>
+            </select>
+          </div>
+
+          <div className="mt-2">
+            <label>Rating: </label>
+            <input
+              type="number"
+              min="1"
+              max="5"
+              defaultValue={b.rating}
+              onBlur={(e) => updateRating(b.bookId, e.target.value)}
+              className="border rounded px-2 py-1 ml-2 w-16"
+            />
+          </div>
+        </BookCard>
       ))}
     </div>
   );
