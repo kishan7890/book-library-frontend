@@ -41,6 +41,17 @@ function MyBooks() {
     }
   };
 
+  const deleteBook = async (bookId) => {
+  try {
+    await api.delete(`/mybooks/${bookId}`);
+    alert("Book removed from My Books");
+    fetchBooks();
+  } catch (err) {
+    console.error("Failed to delete book", err);
+  }
+};
+
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-96">
@@ -62,6 +73,7 @@ function MyBooks() {
             mybook={book}
             onUpdateStatus={updateStatus}
             onUpdateRating={updateRating}
+            onDelete={deleteBook}
           />
         ))
       )}
