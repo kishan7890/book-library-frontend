@@ -12,7 +12,7 @@ function ShowBook() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get(`/api/books/${id}/chapters`)
+    api.get(`/books/${id}/chapters`)
       .then(res => setBook(res.data))
       .catch(err => console.error("Error:", err))
       .finally(() => setLoading(false));
