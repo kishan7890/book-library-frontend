@@ -7,7 +7,7 @@ import ImageGallery from "react-image-gallery";
 
 function ShowBook() {
   const { id } = useParams();
-  const { isLoggedIn } = useContext(AuthContext);
+//   const { isLoggedIn } = useContext(AuthContext);
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -18,7 +18,7 @@ function ShowBook() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (!isLoggedIn) return <Navigate to="/login" />;
+//   if (!isLoggedIn) return <Navigate to="/login" />;
 
   if (loading) {
     return (
