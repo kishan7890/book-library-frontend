@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import MyBooks from './pages/MyBooks';
+import ShowBook from './pages/ShowBook';
 import { AuthProvider } from './context/AuthContext';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/mybooks" element={<MyBooks />} />
+          <Route path="/show-book/:id" element={<ShowBook />} />
         </Routes>
       </Router>
     </AuthProvider>

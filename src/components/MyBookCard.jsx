@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaStar } from 'react-icons/fa';
+import { Link } from 'react-router-dom'; // 👈 Add this import
 import classNames from 'classnames';
 
 const statusColor = {
@@ -70,6 +71,15 @@ function MyBookCard({ mybook, onUpdateStatus, onUpdateRating, onDelete }) {
               />
             ))}
           </div>
+        </div>
+
+        {/* 👉 Show Book Button */}
+        <div className="mt-4">
+          <Link to={`/show-book/${bookId}`}>
+            <button className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+              Show Book
+            </button>
+          </Link>
         </div>
       </div>
     </div>
