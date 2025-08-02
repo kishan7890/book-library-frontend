@@ -5,12 +5,15 @@ import { AuthContext } from '../context/AuthContext';
 function Navbar() {
   const { user, logout } = useContext(AuthContext);
 
+  const isAdmin = user?.email === "kishansahu9348@gmail.com";
+
   return (
     <nav className="bg-gray-800 text-white p-4 flex justify-between">
       <h1 className="text-xl font-bold"><Link to="/">My Library</Link></h1>
       <div className="space-x-4">
         <Link to="/">Home</Link>
         {user && <Link to="/mybooks">My Books</Link>}
+        {isAdmin && <Link to="/add-book">Add Book</Link>}
         {!user ? (
           <>
             <Link to="/login">Login</Link>
