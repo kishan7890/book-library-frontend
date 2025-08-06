@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import api from "../api";
+import { AuthContext } from "../context/AuthContext";
 
 const AddBook = () => {
+  const { user } = useContext(AuthContext);
+
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [description, setDescription] = useState("");
@@ -23,7 +26,7 @@ const AddBook = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!coverImage || chapterImages.some(img => !img)) {
+    if (!coverImage || chapterImages.some((img) => !img)) {
       return setMessage("Please upload all images");
     }
 
@@ -57,6 +60,14 @@ const AddBook = () => {
       setLoading(false);
     }
   };
+
+  if (!user) {
+    return (
+      <div className="text-center mt-10 text-red-500">
+        Please login as admin to add books.
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-xl mx-auto p-4 mt-8 border rounded shadow">
